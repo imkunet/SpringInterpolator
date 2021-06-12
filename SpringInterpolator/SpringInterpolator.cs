@@ -38,9 +38,9 @@ namespace SpringInterpolator
             set => _settings.Dampening = value;
         }
         
-        [SliderProperty("Speed", 1, 5000, 40), DefaultPropertyValue(40), ToolTip(
+        [SliderProperty("Speed", 1f, 5000f, 40f), DefaultPropertyValue(40f), ToolTip(
              "This value controls the speed at which the spring simulation runs\n" +
-             "Higher -> More \"sluggish\" (Default: 40)")
+             "Higher -> More \"sluggish\" (Default: 40.0)")
         ]
         public float Divide
         {
