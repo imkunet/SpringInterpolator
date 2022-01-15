@@ -1,22 +1,25 @@
-# SpringInterpolator Plugin for [OpenTabletDriver](https://github.com/OpenTabletDriver/OpenTabletDriver) [![](https://img.shields.io/github/downloads/Kuuuube/SpringInterpolator/total.svg)](https://github.com/Kuuuube/SpringInterpolator/releases/latest)
+# SpringInterpolator
 
-Interpolates your pointer based on a spring physics system.
+[![](https://img.shields.io/github/downloads/imkunet/SpringInterpolator/total.svg)](https://github.com/imkunet/SpringInterpolator/releases/latest)
 
-## Explanation of the Values:
+*this plugin is intended for use with the [OpenTabletDriver](https://github.com/OpenTabletDriver/OpenTabletDriver) software*
 
-<br>
 
-**Acceleration:** Controls the acceleration of the motion of the spring towards the target (Higher -> Faster) (Default 0.9).
+### How it works
+The key to smooth natural and dynamic animation is to act in a way that the user expects. Using a spring like physics
+system is a great way to make the user be able to predict as to where the cursor will be in tablet applications. The
+application of the *damped harmonic oscillator* which for brevity's sake will be dubbed **spring** in this project is
+responsible for the interpolation in this plugin.
 
-**Dampening:** Dampening controls what the motion of the spring is multiplied by each physics tick (Higher -> Less dampening) (Default: 0.3).
+### Explanation of the Values:
 
-**Speed:** This value controls the speed at which the spring simulation runs (Higher -> More "sluggish") (Default: 40.0)
+**Stiffness:** Controls how stiff the feeling is for the cursor to catch up to the pen (Lower -> Stiffer) (Default 1.5)
 
-<br>
+**Damping:** Damping controls how much "friction" there is (Higher -> More friction) (Default: 3.0)
+
+**StepSize:** Controls how fast the spring simulation is run (Higher -> Slower) (Default: 40.0)
 
 ## Example Settings:
 <p align="middle">
-  <img src="https://raw.githubusercontent.com/imkunet/SpringInterpolator/master/example_settings.png" align="middle"/>
+  <img src="https://raw.githubusercontent.com/imkunet/SpringInterpolator/master/example_settings.png" align="middle" alt="settings example"/>
 </p>
-
-These settings accelerate at 0.9/tick, dampen the value x0.3/tick, and run at 1 tick / 40ms

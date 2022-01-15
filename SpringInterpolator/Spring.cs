@@ -5,114 +5,80 @@ using System.Numerics;
 
 namespace SpringInterpolator
 {
-    // a one dimensional spring class
-    public class Spring
+    public class Spring2D
     {
-        // this value is used to calculate the delta in time between each physics update
-        private DateTime _lastTime = DateTime.Now;
+        private readonly SpringSettings2D settings;
 
-        // the current position of the end of the spring
-        private float _current;
-        
-        // the current motion of the spring
-        private float _motion;
-        
-        // controls the anchor of the spring (where the cursor will spring to)
-        public float Target { get; set; }
+        // the current state of the spring
+        private Vector2 position;
+        private Vector2 velocity;
 
-        // the settings which govern the spring (thanks discord for helping me out on this one)
-        private readonly SpringSettings _settings;
-        
-        public Spring(SpringSettings settings)
+        // controls the "anchor" of the spring (where the cursor will spring down to)
+        public Vector2 Target { get; set; }
+
+        // the last time that the update was called used to determine the difference in time
+        private DateTime lastTime = DateTime.Now;
+
+        public Spring2D(SpringSettings2D settings)
         {
-            _settings = settings;
+            this.settings = settings;
         }
 
-        // idk if there is a built in function to do this in C# so...
-        private static bool Compare(float a, float b)
+        private static bool IsZero(float a)
         {
-            return MathF.Abs(a - b) < 0.000f;
+            return MathF.Abs(a) < 0.0001f;
         }
-        
-        // called every time the current position of the spring needs to be retrieved
-        // it will consider the current time and automatically compensate should the calls be at an abnormal rate
-        public float Update()
+
+        public Vector2 Update()
         {
             var currentTime = DateTime.Now;
-            var deltaTime = currentTime - _lastTime;
+            var deltaTime = currentTime - lastTime;
 
-            // performance
-            if (deltaTime.TotalMilliseconds == 0) return _current;
+            // "performance"
+            if (deltaTime.TotalMilliseconds == 0) return position;
 
-            // more optimization
-            if (Compare(_current, Target) || Compare(_motion, 0.0f))
+            if (
+                IsZero(Vector2.DistanceSquared(position, Target)) &&
+                IsZero(velocity.X * velocity.X * velocity.Y * velocity.Y))
             {
-                _current = Target;
-                _motion = 0.0f;
-                return _current;
+                position = Target;
+                velocity = Vector2.Zero;
+                return position;
             }
 
             // milliseconds might be too small to make the spring effect visible so the divide variable is there
-            var delta = (float) deltaTime.TotalMilliseconds / _settings.Divide;
+            var delta = (float) deltaTime.TotalMilliseconds / settings.StepSize;
             // since the spring is updating, we can update the last time the spring was updated
-            _lastTime = currentTime;
+            lastTime = currentTime;
 
-            // add the acceleration and multiply it with the distance between the target and current to go
-            // towards the target and multiply it by the delta so it is correct time-wise
-            _motion += _settings.Acceleration * (Target - _current) * delta;
-            
-            // dampen the motion so that the spring does not oscillate forever (is really funny when is 0)
+            // apply the stiffness and multiply it with the distance between the target and position to go
+            // towards the target and multiply it by the difference in time so it is correct in respect to time
+            velocity += 1f / settings.Stiffness * (Target - position) * delta;
+
+            // damp the velocity so that the spring does not oscillate forever (is really funny when is 0)
             // might be a feature to remove this in the feature ???? lol
-            _motion *= MathF.Pow(_settings.Dampening, delta);
-            
-            // applies the motion to the current position and correct for time difference
-            _current += _motion * delta;
+            velocity *= MathF.Pow(1f / settings.Damping, delta);
 
-            // supply the current position
-            return _current;
+            // applies the velocity to the current position and correct for time difference
+            position += velocity * delta;
+
+            return position;
         }
     }
 
-    // to be honest this could have all been done without this (using vector math)
-    public class Spring2D
+    public class SpringSettings2D
     {
-        // represent the x, y vector of the spring end
-        private readonly Spring _x;
-        private readonly Spring _y;
-        
-        public Spring2D(SpringSettings springSettings)
+        public SpringSettings2D(float stiffness, float damping, float stepSize)
         {
-            _x = new Spring(springSettings);
-            _y = new Spring(springSettings);
+            Stiffness = stiffness;
+            Damping = damping;
+            StepSize = stepSize;
         }
 
-        // same as the Spring#update function
-        public Vector2 Update()
-        {
-            return new(_x.Update(), _y.Update());
-        }
+        public float Stiffness { get; set; }
 
-        // updates the target of the spring
-        public void UpdateTarget(Vector2 target)
-        {
-            _x.Target = target.X;
-            _y.Target = target.Y;
-        }
-    }
-    
-    // holds the acceleration, dampening, and divide values
-    // this one is for all you oxford comma haters >:)
-    public class SpringSettings
-    {
-        public SpringSettings(float acceleration, float dampening, float divide)
-        {
-            Acceleration = acceleration;
-            Dampening = dampening;
-            Divide = divide;
-        }
-        
-        public float Acceleration { get; set; }
-        public float Dampening { get; set; }
-        public float Divide { get; set; }
+        public float Damping { get; set; }
+
+        public float StepSize { get; set; }
     }
 }
