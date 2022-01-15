@@ -1,4 +1,4 @@
-# SpringInterpolator Plugin for [OpenTabletDriver](https://github.com/OpenTabletDriver/OpenTabletDriver) 
+# SpringInterpolator Plugin for [OpenTabletDriver](https://github.com/OpenTabletDriver/OpenTabletDriver) [![](https://img.shields.io/github/downloads/Kuuuube/SpringInterpolator/total.svg)](https://github.com/Kuuuube/SpringInterpolator/releases/latest)
 
 Interpolates your pointer based on a spring physics system.
 
