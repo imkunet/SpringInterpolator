@@ -75,10 +75,28 @@ namespace SpringInterpolator
             StepSize = stepSize;
         }
 
-        public float Stiffness { get; set; }
+        private float stiffness;
 
-        public float Damping { get; set; }
+        public float Stiffness
+        {
+            get => stiffness;
+            set => stiffness = MathF.Max(value, 0.0001f);
+        }
 
-        public float StepSize { get; set; }
+        private float damping;
+
+        public float Damping
+        {
+            get => damping;
+            set => damping = MathF.Max(value, 0.0001f);
+        }
+
+        private float stepSize;
+
+        public float StepSize
+        {
+            get => stepSize;
+            set => stepSize = MathF.Max(value, 0.0001f);
+        }
     }
 }
